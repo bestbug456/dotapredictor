@@ -1,0 +1,25 @@
+language: go
+sudo: true
+go:
+- '1.10'
+branches:
+  only:
+  - master
+before_install:
+- go get -t -v gopkg.in/mgo.v2/bson
+- go get -t -v gopkg.in/mgo.v2
+- go get -t -v github.com/aws/aws-lambda-go/lambda
+- go get -t -v github.com/bestbug456/gorpropplus
+- go get -t -v github.com/bestbug456/dotateacher/workingqueue
+- go test -race
+script:
+- go test
+- go build
+after_success:
+  - docker --version  # document the version travis is using
+  - pip install --user awscli # install aws cli w/o sudo
+  - export PATH=$PATH:$HOME/.local/bin # put aws in the path
+  - eval $(aws ecr get-login --region us-east-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+  - docker build -t 207595473504.dkr.ecr.us-east-1.amazonaws.com/dotapredictor:latest .
+  - docker push 207595473504.dkr.ecr.us-east-1.amazonaws.com/dotapredictor:latest
+  - aws ecs update-service --cluster default --service dotapredictor --force-new-deployment

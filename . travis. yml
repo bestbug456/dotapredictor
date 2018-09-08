@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- '4.3'
+env:
+  global:
+  - AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+  - AWS_DEFAULT_REGION=us-east-1
+branches:
+  only:
+  - master
+before_install:
+- pip install --user awscli
+- export PATH=$PATH:$HOME/.local/bin
+script: make build
