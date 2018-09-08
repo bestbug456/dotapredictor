@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	"math/rand"
-
 	rprop "github.com/bestbug456/gorpropplus"
 	gorest "github.com/fredmaggiowski/gorest"
 )
@@ -131,7 +129,7 @@ func (p *StatisticsResource) Get(r *http.Request) (int, gorest.Response) {
 
 	var statistics stats
 
-	statistics.Accuracy = p.Stats.MatrixQA[0] / p.Stats.MatrixQA[1]
+	statistics.Accuracy = float64(p.Stats.MatrixQA[0]) / float64(p.Stats.MatrixQA[1])
 
 	out, err := json.Marshal(statistics)
 	if err != nil {
