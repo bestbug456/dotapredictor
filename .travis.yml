@@ -10,9 +10,9 @@ jobs:
   include:
   - stage: test
     script: 
-      - go get -t -v ./... 
-      - go test -race
       - go mod vendor
+      - go test -race
+      - cat go.sum #document each library the version used.
   - stage: deploy
     script:
     - sh ecr_credentials.sh
