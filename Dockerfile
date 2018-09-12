@@ -2,7 +2,7 @@
 FROM golang:1.10-alpine AS build-env
 WORKDIR /app
 ADD . /app
-RUN cd /app && go get -t -v ./... &&  go build -o dotapredictor
+RUN cd /app && go build -o dotapredictor
 
 # use alpine for run the application
 FROM alpine
