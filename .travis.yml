@@ -1,13 +1,18 @@
 language: go
 sudo: true
 go:
-- '1.10'
+- '1.11'
+stages:
+  - test
+  - name: deploy
+    if: branch = master
 jobs:
   include:
   - stage: test
     script: 
       - go get -t -v ./... 
       - go test -race
+      - go mod vendor
   - stage: deploy
     script:
     - sh ecr_credentials.sh
@@ -19,5 +24,3 @@ jobs:
     - eval $(aws ecr get-login --region eu-central-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
     - docker push 207595473504.dkr.ecr.eu-central-1.amazonaws.com/dotapredictor:latest
     - aws ecs update-service --cluster default --service dotapredictor --force-new-deployment
-
-  
