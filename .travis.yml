@@ -2,14 +2,12 @@ language: go
 sudo: true
 go:
 - '1.10'
-stages:
-  - test
-  - name: deploy
-    if: branch = master
-stage: test
-  - go get -t -v ./...
-  - go test -race
+jobs:
+  include:
+-stage: test
+  script: - go get -t -v ./... & go test -race
 stage: deploy
+  script:
   - sh ecr_credentials.sh
   - docker --version  # document the version travis is using
   - docker build -t 207595473504.dkr.ecr.eu-central-1.amazonaws.com/dotapredictor:latest .
