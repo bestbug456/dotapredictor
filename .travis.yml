@@ -2,19 +2,22 @@ language: go
 sudo: true
 go:
 - '1.10'
-branches:
-  only:
-  - master
-before_install:
-- sh ecr_credentials.sh
-- go get -t -v ./...
-- go test -race
-script:
-- docker build -t 207595473504.dkr.ecr.eu-central-1.amazonaws.com/dotapredictor:latest .
-after_success:
+stages:
+  - test
+  - name: deploy
+    if: branch = master
+stage: test
+  - go get -t -v ./...
+  - go test -race
+stage: deploy
+  - sh ecr_credentials.sh
   - docker --version  # document the version travis is using
+  - docker build -t 207595473504.dkr.ecr.eu-central-1.amazonaws.com/dotapredictor:latest .
+  - pip install urllib3[secure]
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
   - eval $(aws ecr get-login --region eu-central-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
   - docker push 207595473504.dkr.ecr.eu-central-1.amazonaws.com/dotapredictor:latest
   - aws ecs update-service --cluster default --service dotapredictor --force-new-deployment
+
+  
