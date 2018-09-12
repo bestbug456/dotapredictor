@@ -13,10 +13,10 @@ jobs:
       - export GO111MODULE=on #enable golang modules
       - go mod vendor
       - go test -race
-      - cat go.sum #document each library the version used
+      - cat go.sum #document for each library the version used
   - stage: deploy
     script:
-    - sh ecr_credentials.sh
+    #- sh ecr_credentials.sh
     - docker --version  # document the version travis is using
     - docker build -t 207595473504.dkr.ecr.eu-central-1.amazonaws.com/dotapredictor:latest .
     - pip install urllib3[secure]

@@ -1,8 +1,9 @@
 # Use an official Golang runtime as build env
-FROM golang:1.10-alpine AS build-env
+FROM golang:1.11-alpine AS build-env
+RUN apk add git
 WORKDIR /app
 ADD . /app
-RUN cd /app && go build -o dotapredictor
+RUN cd /app && export CGO_ENABLED=0 && go build -o dotapredictor
 
 # use alpine for run the application
 FROM alpine
