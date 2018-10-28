@@ -11,5 +11,4 @@ RUN apk update && apk add --no-cache ca-certificates apache2-utils && rm -rf /va
 WORKDIR /app
 COPY --from=build-env /app/dotapredictor /app
 
-EXPOSE 8080
 ENTRYPOINT ./dotapredictor
