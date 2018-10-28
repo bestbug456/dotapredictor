@@ -7,7 +7,7 @@ RUN cd /app && export CGO_ENABLED=0 && go build -o dotapredictor
 
 # use alpine for run the application
 FROM alpine
-RUN apk update && apk add --no-cache ca-certificates apache2-utils && rm -rf /var/cache/apk/*
+RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=build-env /app/dotapredictor /app
 
