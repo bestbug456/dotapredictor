@@ -45,7 +45,7 @@ func main() {
 		}
 	} else {
 		log.Printf("Accessing to db via ssl\n")
-		s, err = DialUsingSSL(address, option, username, password)
+		s, err = dialUsingSSL(address, option, username, password)
 		if err != nil {
 			fmt.Printf("%s\n", err.Error())
 			os.Exit(1)
@@ -85,8 +85,8 @@ func getActualNewNeuralNetwork(s *mgo.Session) (*rprop.NeuralNetwork, error) {
 	return &NN, nil
 }
 
-func getStatistics(s *mgo.Session) (*NNStats, error) {
-	var stats NNStats
+func getStatistics(s *mgo.Session) (*rprop.ValidationResult, error) {
+	var stats rprop.ValidationResult
 	err := s.DB("neuralnetwork").C("score").Find(nil).One(&stats)
 	if err != nil {
 		return nil, err
@@ -118,7 +118,7 @@ func updateDatabaseInfosPeriodically(s *mgo.Session, nnRes *NNResource, statRes 
 	}
 }
 
-func DialUsingSSL(addresses string, dboption string, username string, password string) (*mgo.Session, error) {
+func dialUsingSSL(addresses string, dboption string, username string, password string) (*mgo.Session, error) {
 	listaddresses := make([]string, 0)
 	for _, str := range strings.Split(addresses, ",") {
 		if str != "" {

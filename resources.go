@@ -10,19 +10,26 @@ import (
 	gorest "github.com/fredmaggiowski/gorest"
 )
 
+// NNResource is responsable of contain all the method for
+// neural network prediction
 type NNResource struct {
 	nn *rprop.NeuralNetwork
 }
 
+// PredictionRequest contain a slice of hero id
 type PredictionRequest struct {
 	Heros []string
 }
 
+// PredictionResponse contain the team ID who
+// will win and the probability of winning.
 type PredictionResponse struct {
 	Win  int
 	Prob float64
 }
 
+// Post is the method called for request a new predition. The request
+// body contain a PredictionRequest struct.
 func (p *NNResource) Post(r *http.Request) (int, gorest.Response) {
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -102,8 +109,12 @@ func createBitmasksForTeam(team []int) []float64 {
 	return bitmasks
 }
 
+// HeroResource is the handy way to exspose a list of hero
+// to a web app
 type HeroResource struct{}
 
+// Get method of HeroResource is call for request an update list of
+// suppoerted hero.
 func (p *HeroResource) Get(r *http.Request) (int, gorest.Response) {
 
 	// Return the array of avaiable dota heros
@@ -117,19 +128,24 @@ func (p *HeroResource) Get(r *http.Request) (int, gorest.Response) {
 	return http.StatusOK, response
 }
 
+// StatisticsResource is the classic resouce "for nerd". It
+// will contain all the statistic the web app will expose.
 type StatisticsResource struct {
-	Stats *NNStats
+	Stats *rprop.ValidationResult
 }
 
 type stats struct {
-	Accuracy float64
+	Accuracy        float64
+	TotalDataTested int
 }
 
+// Get is call for request all the statistics of the system
 func (p *StatisticsResource) Get(r *http.Request) (int, gorest.Response) {
 
 	var statistics stats
 
-	statistics.Accuracy = float64(p.Stats.MatrixQA[0]) / float64(p.Stats.MatrixQA[1])
+	statistics.TotalDataTested = p.Stats.ConfusionMatrix[0][0] + p.Stats.ConfusionMatrix[0][1] + p.Stats.ConfusionMatrix[1][0] + p.Stats.ConfusionMatrix[1][1]
+	statistics.Accuracy = float64(p.Stats.ConfusionMatrix[0][0]+p.Stats.ConfusionMatrix[1][1]) / float64(statistics.TotalDataTested)
 
 	out, err := json.Marshal(statistics)
 	if err != nil {

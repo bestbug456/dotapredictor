@@ -1,9 +1,5 @@
 package main
 
-type NNStats struct {
-	MatrixQA []int
-}
-
 var (
 	heros = []string{"npc_dota_hero_antimage",
 		"npc_dota_hero_axe",
