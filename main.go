@@ -72,8 +72,8 @@ func main() {
 
 	// Get the handler for your HTTP(S) server.
 	router := handler.GetMuxRouter(nil)
-	log.Printf("serving on localhost:8080\n")
-	http.ListenAndServe("localhost:8080", router)
+	log.Printf("serving on 0.0.0.0:8080\n")
+	http.ListenAndServe("0.0.0.0:8080", router)
 }
 
 func getActualNewNeuralNetwork(s *mgo.Session) (*rprop.NeuralNetwork, error) {
