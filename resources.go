@@ -41,7 +41,7 @@ func (p *NNResource) Post(r *http.Request) (int, gorest.Response) {
 
 	err = json.Unmarshal(b, &request)
 	if err != nil {
-		log.Printf("Can't marshal heros: %s.\n", err.Error())
+		log.Printf("Can't unmarshal heros: %s.\n", err.Error())
 		return http.StatusInternalServerError, nil
 	}
 
@@ -53,7 +53,7 @@ func (p *NNResource) Post(r *http.Request) (int, gorest.Response) {
 
 	ris, err := p.nn.Predict(input)
 	if err != nil {
-		log.Printf("Can't marshal heros: %s.\n", err.Error())
+		log.Printf("Can't predict: %s.\n", err.Error())
 		return http.StatusInternalServerError, nil
 	}
 
