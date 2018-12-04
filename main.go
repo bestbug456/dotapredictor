@@ -13,6 +13,7 @@ import (
 	rprop "github.com/bestbug456/gorpropplus"
 	gorest "github.com/fredmaggiowski/gorest"
 
+	"github.com/rs/cors"
 	"gopkg.in/mgo.v2"
 )
 
@@ -32,6 +33,11 @@ func main() {
 	password := os.Getenv("password")
 	option := os.Getenv("option")
 	ssl := os.Getenv("ssl")
+	allowedorigins := os.Getenv("allowed")
+	var allowedoriginsSlice []string
+	if allowedorigins != "" {
+		allowedoriginsSlice = strings.Split(allowedorigins, ",")
+	}
 
 	var s *mgo.Session
 	var err error
@@ -70,10 +76,19 @@ func main() {
 		gorest.NewRoute(&statRes, "/stats"),
 	})
 
+	c := cors.New(cors.Options{
+		AllowedOrigins:   allowedoriginsSlice,
+		AllowCredentials: true,
+		// Enable Debugging for testing, consider disabling in production
+		Debug: true,
+	})
+
+	// Insert the middleware
+	corsmiddleware := c.Handler(handler.GetMuxRouter(nil))
+
 	// Get the handler for your HTTP(S) server.
-	router := handler.GetMuxRouter(nil)
 	log.Printf("serving on 0.0.0.0:8080\n")
-	http.ListenAndServe("0.0.0.0:8080", router)
+	http.ListenAndServe("0.0.0.0:8080", corsmiddleware)
 }
 
 func getActualNewNeuralNetwork(s *mgo.Session) (*rprop.NeuralNetwork, error) {
